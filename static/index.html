@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Analista de Datos IA con RAG — Respuestas precisas basadas exclusivamente en tus documentos.">
+    <title>RAG AI Data Analyst</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Mobile overlay -->
+        <div class="mobile-overlay" id="mobile-overlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">🧠</div>
+                    <h1>RAG Analyst</h1>
+                </div>
+                <p class="logo-subtitle">Analista de Datos IA</p>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <div class="upload-zone" id="upload-zone">
+                    <div class="upload-icon">📄</div>
+                    <p class="upload-text">
+                        <strong>Arrastra archivos aquí</strong><br>
+                        o haz clic para seleccionar
+                    </p>
+                    <p class="upload-formats">PDF · DOCX · XLSX · TXT</p>
+                    <input type="file" class="upload-input" id="file-input"
+                           accept=".pdf,.docx,.xlsx,.xls,.txt" multiple>
+                </div>
+                <div class="upload-progress" id="upload-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <p class="progress-text" id="progress-text">Procesando documento...</p>
+                </div>
+            </div>
+
+            <!-- Documents List -->
+            <div class="documents-section">
+                <p class="section-title">Documentos cargados</p>
+                <div class="documents-list" id="documents-list">
+                    <div class="no-docs" id="no-docs">
+                        <div class="no-docs-icon">📁</div>
+                        <p>Sin documentos cargados.<br>Sube un archivo para comenzar.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="main-content">
+            <!-- Chat Header -->
+            <header class="chat-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="mobile-toggle" id="mobile-toggle">☰</button>
+                    <div class="chat-header-info">
+                        <h2>Chat con tus Documentos</h2>
+                    </div>
+                </div>
+                <div class="chat-header-status">
+                    <div class="status-dot"></div>
+                    <span id="status-text">Listo</span>
+                </div>
+            </header>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chat-messages">
+                <!-- Welcome Screen -->
+                <div class="welcome-screen" id="welcome-screen">
+                    <div class="welcome-icon">🤖</div>
+                    <h2 class="welcome-title">Analista de Datos IA</h2>
+                    <p class="welcome-subtitle">
+                        Sube tus documentos (PDF, DOCX, XLSX, TXT) y hazme preguntas.
+                        Mis respuestas se basan <strong>exclusivamente</strong> en tus archivos.
+                    </p>
+                    <div class="welcome-hints">
+                        <div class="hint-chip" data-hint="¿Cuál es el resumen del documento?">📋 Resumen del documento</div>
+                        <div class="hint-chip" data-hint="¿Qué datos aparecen en la tabla principal?">📊 Datos de la tabla</div>
+                        <div class="hint-chip" data-hint="¿Cuáles son los puntos clave del informe?">🔑 Puntos clave</div>
+                        <div class="hint-chip" data-hint="¿Qué conclusiones se mencionan?">📝 Conclusiones</div>
+                    </div>
+                </div>
+
+                <!-- Typing indicator -->
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="message-avatar">🧠</div>
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-area">
+                <div class="chat-input-wrapper">
+                    <textarea id="chat-input"
+                              placeholder="Escribe tu pregunta sobre los documentos..."
+                              rows="1"></textarea>
+                    <button id="send-btn" title="Enviar">▶</button>
+                </div>
+                <p class="input-hint">Presiona Enter para enviar · Shift+Enter para nueva línea</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
