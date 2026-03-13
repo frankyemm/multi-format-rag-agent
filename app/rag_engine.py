@@ -68,9 +68,14 @@ def _get_chroma_client() -> chromadb.ClientAPI:
 def get_collection() -> chromadb.Collection:
     """Get or create the main document collection."""
     client = _get_chroma_client()
+    # Adding robust HNSW parameters to avoid "ef/M too small" errors on tiny collections
     return client.get_or_create_collection(
         name=COLLECTION_NAME,
-        metadata={"hnsw:space": "cosine"},
+        metadata={
+            "hnsw:space": "cosine",
+            "hnsw:construction_ef": 128,
+            "hnsw:M": 16
+        },
     )
 
 
@@ -219,7 +224,9 @@ def store_chunks(chunks: list[dict], doc_id: str) -> int:
 
     collection = get_collection()
     texts = [c["text"] for c in chunks]
-    embeddings = embed_texts(texts)
+    # Include the source filename in the text to be embedded so semantic search can find it by name
+    embed_inputs = [f"Archivo: {c['source']}\nContenido: {c['text']}" for c in chunks]
+    embeddings = embed_texts(embed_inputs)
 
     ids = [f"{doc_id}_{i}" for i in range(len(chunks))]
     metadatas = [{"source": c["source"], "doc_id": doc_id} for c in chunks]
@@ -257,18 +264,38 @@ def query(question: str) -> dict:
 
     q_embedding = embed_texts([question])[0]
 
-    results = collection.query(
-        query_embeddings=[q_embedding],
-        n_results=min(TOP_K, collection.count()),
-        include=["documents", "metadatas", "distances"],
-    )
+    # Retrieve top-K relevant chunks with defensive error handling
+    try:
+        results = collection.query(
+            query_embeddings=[q_embedding],
+            n_results=min(8, collection.count()),  # Increased K to 8 for better coverage
+            include=["documents", "metadatas", "distances"],
+        )
+    except RuntimeError as e:
+        # Graceful fallback: if HNSW fails on a small collection, just get all docs raw
+        if "RuntimeError" in str(e) or "ef or M" in str(e):
+            results = collection.get(include=["documents", "metadatas"], limit=10)
+            # Reformat get results to match query results structure temporarily
+            results = {
+                "documents": [results["documents"]],
+                "metadatas": [results["metadatas"]]
+            }
+        else:
+            raise e
 
     context_chunks: list[dict] = []
     sources: set[str] = set()
-    for doc_text, metadata in zip(results["documents"][0], results["metadatas"][0]):
-        src = metadata.get("source", "Desconocido")
-        sources.add(src)
-        context_chunks.append({"text": doc_text, "source": src})
+    
+    # Check if we have results
+    if results["documents"] and results["documents"][0]:
+        for doc_text, metadata in zip(results["documents"][0], results["metadatas"][0]):
+            src = metadata.get("source", "Desconocido")
+            sources.add(src)
+            # Add explicit source header to the text chunk to help LLM distinguish
+            context_chunks.append({
+                "text": f"--- FUENTE: {src} ---\n{doc_text}",
+                "source": src
+            })
 
     prompt = build_prompt(question, context_chunks)
     answer = _call_openai(prompt)

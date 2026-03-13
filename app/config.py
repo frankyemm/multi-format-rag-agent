@@ -23,5 +23,5 @@ CHROMA_DIR.mkdir(exist_ok=True)
 # RAG settings
 CHUNK_SIZE = 800
 CHUNK_OVERLAP = 200
-TOP_K = 5
+TOP_K = 15
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"  # 384-dim vectors, local, fast

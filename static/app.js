@@ -370,11 +370,36 @@ function renderMarkdown(text) {
 
     let html = text;
 
-    // Escape HTML first (but preserve markdown)
-    html = html
+    // Handle Pensamiento (Internal Monologue) first
+    // We do this before escaping so we can use the tags
+    html = html.replace(/&lt;pensamiento&gt;([\s\S]*?)&lt;\/pensamiento&gt;/g, (match, content) => {
+        return `<details class="thought-container" open>
+            <summary class="thought-header">Monólogo Interno de Análisis</summary>
+            <div class="thought-content">${content.trim()}</div>
+        </details>`;
+    });
+
+    // If it hasn't been escaped yet, let's be careful.
+    // Actually, I'll move the pensée handling AFTER initial escaping but before other markdown tags.
+    
+    // Let's restart the function logic for clarity.
+    return processMarkdown(text);
+}
+
+function processMarkdown(text) {
+    let html = text
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
+
+    // Handle Pensamiento (Internal Monologue)
+    html = html.replace(/&lt;pensamiento&gt;([\s\S]*?)&lt;\/pensamiento&gt;/g, (match, content) => {
+        // Unescape internal content slightly for basic formatting if needed, but safe
+        return `<details class="thought-container">
+            <summary class="thought-header">Monólogo Interno de Análisis</summary>
+            <div class="thought-content">${content.trim().replace(/\n/g, '<br>')}</div>
+        </details>`;
+    });
 
     // Code blocks (``` ... ```)
     html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
