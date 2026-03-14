@@ -1,1 +1,16 @@
-{}
+{
+  "ae091f22-a92a-4228-857f-15e8841ea49d": {
+    "filename": "Cellular-Neural-Networks-Dynamics-and-Modelling.pdf",
+    "extension": ".pdf",
+    "size_bytes": 3852463,
+    "num_chunks": 2251,
+    "file_path": "/home/franky/Escritorio/Prueba-ai-analyst/multi-format-rag-agent/uploads/ae091f22-a92a-4228-857f-15e8841ea49d.pdf"
+  },
+  "c754b00d-c8d0-4c8c-89e8-5cd30ad59894": {
+    "filename": "BiologicalNeuronModels_Tutorials.pdf",
+    "extension": ".pdf",
+    "size_bytes": 8527456,
+    "num_chunks": 48,
+    "file_path": "/home/franky/Escritorio/Prueba-ai-analyst/multi-format-rag-agent/uploads/c754b00d-c8d0-4c8c-89e8-5cd30ad59894.pdf"
+  }
+}
