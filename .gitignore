@@ -10,9 +10,6 @@ ENV/
 !.env.example
 
 # Project specific
-uploads/
-chroma_db/
-_registry.json
 __pycache__/
 *.pyc
 /tmp/
